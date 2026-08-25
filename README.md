@@ -24,3 +24,6 @@ for the 1,000 / 10,000 / 100,000-record performance comparison.
 
 Verified console captures are stored in `demo_outputs`.
 
+The final 5-page engineering memo is stored at
+`report/Engineering_Memo.pdf`.
+
