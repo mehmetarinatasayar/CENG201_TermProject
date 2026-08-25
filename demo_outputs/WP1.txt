@@ -1,0 +1,22 @@
+=== PUT AND LOOKUP TEST ===
+S-0001 v1 project1.pdf            1000 KB 22:13:20.001
+S-0002 v1 project2.pdf            1100 KB 22:13:20.002
+S-0003 v1 project3.pdf            1200 KB 22:13:20.003
+S-0004 v1 project4.pdf            1300 KB 22:13:20.004
+S-0005 v1 project5.pdf            1400 KB 22:13:20.005 [ACC]
+S-0006 v1 project6.pdf            1500 KB 22:13:20.006
+S-0007 v1 project7.pdf            1600 KB 22:13:20.007
+S-0009 v1 collision.pdf           1700 KB 22:13:20.008
+
+Registry size: 8
+
+=== VERSION UPDATE TEST ===
+Version after first update: 2
+Version after second update: 3
+Active record: S-0001 v3 project_really_final.pdf  1300 KB 23:53:20.000
+
+=== UNKNOWN STUDENT TEST ===
+Unknown lookup: null
+
+=== 100,000 LOOKUP TIMING ===
+100,000 lookups: 3067900 ns
