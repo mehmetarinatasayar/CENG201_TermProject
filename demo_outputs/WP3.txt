@@ -1,0 +1,37 @@
+=== WP3 PRIORITY DEMO ===
+
+Naive order:
+S-0002 v1 S-0002_project.pdf      1000 KB 22:30:00.000 [ACC]
+S-0005 v1 S-0005_project.pdf      1000 KB 22:46:40.000 [ACC]
+S-0006 v1 S-0006_project.pdf      1000 KB 22:05:00.000
+S-0003 v1 S-0003_project.pdf      1000 KB 22:13:20.000
+S-0008 v1 S-0008_project.pdf      1000 KB 22:38:20.000
+S-0001 v1 S-0001_project.pdf      1000 KB 23:03:20.000
+S-0004 v1 S-0004_project.pdf      1000 KB 23:20:00.000
+S-0007 v1 S-0007_project.pdf      1000 KB 23:36:40.000
+
+Heap order:
+S-0002 v1 S-0002_project.pdf      1000 KB 22:30:00.000 [ACC]
+S-0005 v1 S-0005_project.pdf      1000 KB 22:46:40.000 [ACC]
+S-0006 v1 S-0006_project.pdf      1000 KB 22:05:00.000
+S-0003 v1 S-0003_project.pdf      1000 KB 22:13:20.000
+S-0008 v1 S-0008_project.pdf      1000 KB 22:38:20.000
+S-0001 v1 S-0001_project.pdf      1000 KB 23:03:20.000
+S-0004 v1 S-0004_project.pdf      1000 KB 23:20:00.000
+S-0007 v1 S-0007_project.pdf      1000 KB 23:36:40.000
+
+Both dispatchers match: true
+Bottom-up loadBurst matches: true
+
+=== 1000 RECORD TIMING ===
+Naive dispatcher: 2629500 ns
+Heap dispatcher:  174300 ns
+Bottom-up heap:    203900 ns
+Heap speedup: 15,09 times
+
+=== 10000 RECORD TIMING ===
+Naive dispatcher: 146280100 ns
+Heap dispatcher:  4161800 ns
+Bottom-up heap:    1628600 ns
+Heap speedup: 35,15 times
+
