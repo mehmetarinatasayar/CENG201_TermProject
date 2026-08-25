@@ -6,7 +6,21 @@ Console-based assignment submission platform for the CENG 201 term project.
 
 - Java JDK 17 or later
 
-## Current status
+## Implemented work packages
 
-- Starter `Submission` class added.
-- Starter deterministic `ScenarioGenerator` added.
+- WP1: Separate-chaining hash table and version updates
+- WP2: Circular upload queue with reject-new overflow policy
+- WP3: Binary max-heap priority dispatcher
+- WP4: Per-student version stacks and rollback service
+- WP5: AVL submission timeline and recursive range queries
+- WP6: Merge sort, insertion-sort comparison and binary deadline search
+- WP7: Deterministic end-to-end deadline-night simulation
+
+## Running the project
+
+Open the project in IntelliJ IDEA with JDK 17 or later. Run `WP1Demo`
+through `WP7Demo` for the individual demonstrations. Run `ScalingStudy`
+for the 1,000 / 10,000 / 100,000-record performance comparison.
+
+Verified console captures are stored in `demo_outputs`.
+
