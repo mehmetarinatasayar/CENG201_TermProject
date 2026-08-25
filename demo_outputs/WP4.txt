@@ -1,0 +1,38 @@
+=== WP4 VERSION ROLLBACK DEMO ===
+
+--- First upload ---
+Active: S-0042 v1 hw3.pdf                  900 KB 22:10:00.000
+S-0042 Stack top -> [empty]
+
+--- Second upload ---
+Active: S-0042 v2 hw3_final.pdf            950 KB 23:40:00.000
+S-0042 Stack top -> v1 hw3.pdf 900 KB 22:10:00.000
+
+--- Wrong third upload ---
+Active: S-0042 v3 chemistry_lab.pdf       1100 KB 23:58:00.000
+S-0042 Stack top -> v2 hw3_final.pdf 950 KB 23:40:00.000 | v1 hw3.pdf 900 KB 22:10:00.000
+
+First rollback:
+Rollback completed for S-0042: restored v2
+
+--- After first rollback ---
+Active: S-0042 v2 hw3_final.pdf            950 KB 23:40:00.000
+S-0042 Stack top -> v1 hw3.pdf 900 KB 22:10:00.000
+
+Second rollback:
+Rollback completed for S-0042: restored v1
+
+--- After second rollback ---
+Active: S-0042 v1 hw3.pdf                  900 KB 22:10:00.000
+S-0042 Stack top -> [empty]
+
+Third rollback:
+No earlier version for S-0042
+
+--- After third rollback ---
+Active: S-0042 v1 hw3.pdf                  900 KB 22:10:00.000
+S-0042 Stack top -> [empty]
+
+=== EMPTY STACK POP TEST ===
+Expected exception: Version stack is empty.
+
