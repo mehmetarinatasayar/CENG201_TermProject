@@ -1,0 +1,36 @@
+=== CIRCULAR QUEUE DEMO ===
+Initial state:
+[]
+
+Fill the queue:
+S-0001 accepted: true
+[S-0001]
+S-0002 accepted: true
+[S-0001, S-0002]
+S-0003 accepted: true
+[S-0001, S-0002, S-0003]
+S-0004 accepted: true
+[S-0001, S-0002, S-0003, S-0004]
+S-0005 accepted: true
+[S-0001, S-0002, S-0003, S-0004, S-0005]
+
+Dequeue two:
+Removed: S-0001
+Removed: S-0002
+[S-0003, S-0004, S-0005]
+
+Enqueue three:
+S-0006 accepted: true
+[S-0003, S-0004, S-0005, S-0006]
+S-0007 accepted: true
+[S-0003, S-0004, S-0005, S-0006, S-0007]
+S-0008 accepted: false
+[S-0003, S-0004, S-0005, S-0006, S-0007]
+
+S-0008 is rejected because the queue is full.
+Full-buffer policy: reject the new upload.
+
+=== 10,000 UPLOAD TIMING ===
+Naive queue:    35860700 ns
+Circular queue: 505200 ns
+Circular speedup: 70,98 times
