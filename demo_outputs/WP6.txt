@@ -1,0 +1,44 @@
+=== WP6 DEADLINE REPORT DEMO ===
+
+Top-3 largest files:
+1. S-0002 largest.pdf 9000 KB
+2. S-0004 second-largest.pdf 8000 KB
+3. S-0006 third-largest.pdf 7000 KB
+
+Both sorts match: true
+
+Complete sheet:
+STUDENT    FILE                     VERSION  TIME          LATE 
+---------------------------------------------------------------
+S-0008     normal.pdf               1        23:03:20.000  NO   
+S-0006     third-largest.pdf        1        23:20:00.000  NO   
+S-0002     largest.pdf              1        23:36:40.000  NO   
+S-0009     another.pdf              1        23:45:00.000  NO   
+S-0001     small.pdf                1        23:53:20.000  NO   
+S-0003     medium.pdf               1        23:56:40.000  NO   
+S-0004     second-largest.pdf       1        23:59:00.000  NO   
+S-0005     late-one.pdf             1        23:59:00.001  YES  
+S-0007     late-two.pdf             1        24:00:00.000  YES  
+
+First late index: 7
+Late submissions:
+S-0005 v1 late-one.pdf            1500 KB 23:59:00.001 LATE
+S-0007 v1 late-two.pdf            3000 KB 24:00:00.000 LATE
+
+=== BINARY SEARCH EDGE CASES ===
+Deadline before all -> index: 0
+Deadline between two -> index: 4
+Deadline after all -> index: -1
+
+=== 1000 RECORD SORT TIMING ===
+Merge sort:     194000 ns
+Insertion sort: 1834800 ns
+Results match: true
+Merge speedup: 9,46 times
+
+=== 100000 RECORD SORT TIMING ===
+Merge sort:     13191300 ns
+Insertion sort: 10995380400 ns
+Results match: true
+Merge speedup: 833,53 times
+
