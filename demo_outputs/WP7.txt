@@ -1,0 +1,89 @@
+=== EXAMGATE DEADLINE NIGHT ===
+Seed: 20260725
+Students: 800
+Generated uploads: 2500
+Re-uploading students: 80
+
+Receiving burst 1...
+
+=== CHECKPOINT: AFTER BURST 1 ===
+Buffer occupancy: 0/800
+Uploads accepted: 800
+Policy activations: 0
+Re-uploads seen: 0
+Versions rolled back: 0
+Late count: 0
+
+Receiving burst 2...
+Rollback completed for S-0041: restored v1
+Rollback completed for S-0001: restored v2
+Rollback completed for S-0041: restored v1
+Rollback completed for S-0001: restored v2
+Rollback completed for S-0041: restored v1
+Rollback completed for S-0001: restored v2
+Rollback completed for S-0041: restored v1
+Rollback completed for S-0001: restored v2
+Rollback completed for S-0041: restored v1
+Rollback completed for S-0001: restored v2
+Rollback completed for S-0041: restored v1
+Rollback completed for S-0001: restored v2
+Rollback completed for S-0041: restored v1
+Rollback completed for S-0001: restored v2
+Rollback completed for S-0041: restored v1
+Rollback completed for S-0001: restored v2
+Rollback completed for S-0041: restored v1
+Rollback completed for S-0001: restored v2
+Rollback completed for S-0041: restored v1
+
+Receiving burst 3...
+
+=== CHECKPOINT: AT 23:59 ===
+Buffer occupancy: 400/800
+Uploads accepted: 2000
+Policy activations: 0
+Re-uploads seen: 1200
+Versions rolled back: 19
+Late count: 0
+Rollback completed for S-0066: restored v11
+Rollback completed for S-0051: restored v12
+Rollback completed for S-0036: restored v12
+Rollback completed for S-0021: restored v13
+Rollback completed for S-0006: restored v13
+Rollback completed for S-0071: restored v14
+Rollback completed for S-0056: restored v14
+Rollback completed for S-0041: restored v5
+Rollback completed for S-0026: restored v16
+Rollback completed for S-0011: restored v16
+Rollback completed for S-0076: restored v17
+Rollback completed for S-0061: restored v17
+Rollback completed for S-0046: restored v18
+Rollback completed for S-0031: restored v18
+Rollback completed for S-0016: restored v19
+Rollback completed for S-0001: restored v11
+Rollback completed for S-0066: restored v19
+
+=== CHECKPOINT: FINAL ===
+Buffer occupancy: 0/800
+Uploads accepted: 2400
+Policy activations: 100
+Re-uploads seen: 1600
+Versions rolled back: 36
+Late count: 400
+
+=== FINAL REPORT SUMMARY ===
+Processed uploads: 2400
+Registry students: 800
+Timeline height: 12
+First late index: 2000
+Top-10 largest accepted files:
+1. S-0060 4999 KB S-0060_upload_1808.pdf
+2. S-0765 4999 KB S-0765_upload_765.pdf
+3. S-0052 4998 KB S-0052_upload_1704.pdf
+4. S-0058 4998 KB S-0058_upload_1702.pdf
+5. S-0029 4996 KB S-0029_upload_2125.pdf
+6. S-0042 4992 KB S-0042_upload_2374.pdf
+7. S-0022 4990 KB S-0022_upload_2274.pdf
+8. S-0226 4989 KB S-0226_upload_226.pdf
+9. S-0053 4988 KB S-0053_upload_1957.pdf
+10. S-0059 4987 KB S-0059_upload_1235.pdf
+
