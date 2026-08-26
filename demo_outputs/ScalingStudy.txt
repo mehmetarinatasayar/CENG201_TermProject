@@ -1,9 +1,8 @@
 === SCALING STUDY ===
 Times are in milliseconds.
 
-Records    Naive queue     Circular   Naive heap  Binary heap     End-to-end
+Records    Naive queue     Circular Naive dispatch  Binary heap     End-to-end
 --------------------------------------------------------------------------
-    1.000        1,580        0,021        5,926        0,166          0,530
-   10.000       30,480        0,460      154,630        2,129          7,504
-  100.000     3731,709        2,932    15742,819       14,686         47,052
-
+    1.000        1,407        0,018        2,446        0,278          0,443
+   10.000       28,335        0,360      113,723        1,139          4,517
+  100.000     2855,854        1,452    13954,359       11,818         35,153

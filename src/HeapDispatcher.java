@@ -1,20 +1,11 @@
 public class HeapDispatcher {
-
-    private Submission[] heap;
+    private Submission[] heap = new Submission[8];
     private int count;
-
-    private static final int INITIAL_CAPACITY = 8;
-
-    public HeapDispatcher() {
-        heap = new Submission[INITIAL_CAPACITY];
-        count = 0;
-    }
 
     public void submit(Submission submission) {
         if (count == heap.length) {
             resize();
         }
-
         heap[count] = submission;
         siftUp(count);
         count++;
@@ -26,7 +17,6 @@ public class HeapDispatcher {
         }
 
         Submission result = heap[0];
-
         count--;
         heap[0] = heap[count];
         heap[count] = null;
@@ -34,24 +24,19 @@ public class HeapDispatcher {
         if (count > 0) {
             siftDown(0);
         }
-
         return result;
     }
 
     public void loadBurst(Submission[] burst) {
-        int requiredCapacity = Math.max(
-                INITIAL_CAPACITY,
-                burst.length
-        );
-
-        heap = new Submission[requiredCapacity];
+        int capacity = Math.max(8, burst.length);
+        heap = new Submission[capacity];
 
         for (int i = 0; i < burst.length; i++) {
             heap[i] = burst[i];
         }
-
         count = burst.length;
 
+        // Start from the last parent and move toward the root.
         for (int i = count / 2 - 1; i >= 0; i--) {
             siftDown(i);
         }
@@ -62,100 +47,58 @@ public class HeapDispatcher {
     }
 
     private void siftUp(int index) {
-        int current = index;
-
-        while (current > 0) {
-            int parent = (current - 1) / 2;
-
-            if (
-                    !hasHigherPriority(
-                            heap[current],
-                            heap[parent]
-                    )
-            ) {
+        while (index > 0) {
+            int parent = (index - 1) / 2;
+            if (!hasHigherPriority(heap[index], heap[parent])) {
                 break;
             }
-
-            swap(current, parent);
-            current = parent;
+            swap(index, parent);
+            index = parent;
         }
     }
 
     private void siftDown(int index) {
-        int current = index;
-
         while (true) {
-            int leftChild = current * 2 + 1;
-            int rightChild = current * 2 + 2;
-            int highest = current;
+            int left = index * 2 + 1;
+            int right = index * 2 + 2;
+            int best = index;
 
-            if (
-                    leftChild < count
-                            && hasHigherPriority(
-                                    heap[leftChild],
-                                    heap[highest]
-                            )
-            ) {
-                highest = leftChild;
+            if (left < count && hasHigherPriority(heap[left], heap[best])) {
+                best = left;
             }
-
-            if (
-                    rightChild < count
-                            && hasHigherPriority(
-                                    heap[rightChild],
-                                    heap[highest]
-                            )
-            ) {
-                highest = rightChild;
+            if (right < count && hasHigherPriority(heap[right], heap[best])) {
+                best = right;
             }
-
-            if (highest == current) {
+            if (best == index) {
                 break;
             }
 
-            swap(current, highest);
-            current = highest;
+            swap(index, best);
+            index = best;
         }
     }
 
-    private boolean hasHigherPriority(
-            Submission first,
-            Submission second
-    ) {
-        if (
-                first.hasAccommodation()
-                        != second.hasAccommodation()
-        ) {
+    private boolean hasHigherPriority(Submission first, Submission second) {
+        if (first.hasAccommodation() != second.hasAccommodation()) {
             return first.hasAccommodation();
         }
-
-        if (
-                first.getTimestampMs()
-                        != second.getTimestampMs()
-        ) {
-            return first.getTimestampMs()
-                    < second.getTimestampMs();
+        if (first.getTimestampMs() != second.getTimestampMs()) {
+            return first.getTimestampMs() < second.getTimestampMs();
         }
-
-        return first.getStudentId().compareTo(
-                second.getStudentId()
-        ) < 0;
+        return first.getStudentId().compareTo(second.getStudentId()) < 0;
     }
 
-    private void swap(int firstIndex, int secondIndex) {
-        Submission temporary = heap[firstIndex];
-        heap[firstIndex] = heap[secondIndex];
-        heap[secondIndex] = temporary;
+    private void swap(int first, int second) {
+        Submission temp = heap[first];
+        heap[first] = heap[second];
+        heap[second] = temp;
     }
 
     private void resize() {
-        Submission[] larger =
-                new Submission[heap.length * 2];
-
+        Submission[] larger = new Submission[heap.length * 2];
         for (int i = 0; i < count; i++) {
             larger[i] = heap[i];
         }
-
         heap = larger;
     }
 }

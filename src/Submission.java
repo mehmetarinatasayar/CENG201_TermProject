@@ -1,6 +1,3 @@
-/**
- * One student's active submission on the ExamGate platform.
- */
 public class Submission {
     public static final long DEADLINE_MS = 86_340_000L;
 
@@ -21,42 +18,26 @@ public class Submission {
         this.accommodationFlag = accommodationFlag;
     }
 
-    public String getStudentId() {
-        return studentId;
+    public String getStudentId() { return studentId; }
+    public String getFileName() { return fileName; }
+    public int getSizeKb() { return sizeKb; }
+    public long getTimestampMs() { return timestampMs; }
+    public int getVersion() { return version; }
+    public boolean hasAccommodation() { return accommodationFlag; }
+
+    public void replaceFile(String newFileName, int newSizeKb, long newTimestampMs) {
+        fileName = newFileName;
+        sizeKb = newSizeKb;
+        timestampMs = newTimestampMs;
+        version++;
     }
 
-    public String getFileName() {
-        return fileName;
-    }
-
-    public int getSizeKb() {
-        return sizeKb;
-    }
-
-    public long getTimestampMs() {
-        return timestampMs;
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
-    public boolean hasAccommodation() {
-        return accommodationFlag;
-    }
-
-    public void replaceFile(String fileName, int sizeKb, long timestampMs) {
-        this.fileName = fileName;
-        this.sizeKb = sizeKb;
-        this.timestampMs = timestampMs;
-        this.version++;
-    }
-
-    public void restoreFile(String fileName, int sizeKb, long timestampMs, int version) {
-        this.fileName = fileName;
-        this.sizeKb = sizeKb;
-        this.timestampMs = timestampMs;
-        this.version = version;
+    public void restoreFile(String oldFileName, int oldSizeKb,
+                            long oldTimestampMs, int oldVersion) {
+        fileName = oldFileName;
+        sizeKb = oldSizeKb;
+        timestampMs = oldTimestampMs;
+        version = oldVersion;
     }
 
     public boolean isLate() {
@@ -73,9 +54,9 @@ public class Submission {
 
     @Override
     public String toString() {
+        String accommodation = accommodationFlag ? " [ACC]" : "";
+        String late = isLate() ? " LATE" : "";
         return String.format("%s v%d %-22s %5d KB %s%s%s",
-                studentId, version, fileName, sizeKb, clock(),
-                accommodationFlag ? " [ACC]" : "",
-                isLate() ? " LATE" : "");
+                studentId, version, fileName, sizeKb, clock(), accommodation, late);
     }
 }

@@ -31,14 +31,14 @@ Deadline between two -> index: 4
 Deadline after all -> index: -1
 
 === 1000 RECORD SORT TIMING ===
-Merge sort:     194000 ns
-Insertion sort: 1834800 ns
+Merge sort:     107100 ns
+Insertion sort: 1512800 ns
 Results match: true
-Merge speedup: 9,46 times
+Merge speedup: 14,13 times
 
 === 100000 RECORD SORT TIMING ===
-Merge sort:     13191300 ns
-Insertion sort: 10995380400 ns
+Merge sort:     10348800 ns
+Insertion sort: 8767299000 ns
 Results match: true
-Merge speedup: 833,53 times
+Merge speedup: 847,18 times
 

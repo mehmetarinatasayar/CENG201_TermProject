@@ -1,27 +1,20 @@
 public class NaiveUploadQueue {
-
-    private Submission[] queue;
+    private final Submission[] queue;
     private int count;
 
     public NaiveUploadQueue(int capacity) {
         if (capacity <= 0) {
-            throw new IllegalArgumentException(
-                    "Capacity must be positive."
-            );
+            throw new IllegalArgumentException("Capacity must be positive.");
         }
-
         queue = new Submission[capacity];
-        count = 0;
     }
 
     public boolean enqueue(Submission submission) {
         if (count == queue.length) {
             return false;
         }
-
         queue[count] = submission;
         count++;
-
         return true;
     }
 
@@ -30,16 +23,16 @@ public class NaiveUploadQueue {
             return null;
         }
 
-        Submission removed = queue[0];
+        Submission first = queue[0];
 
+        // This loop makes the naive dequeue O(n).
         for (int i = 1; i < count; i++) {
             queue[i - 1] = queue[i];
         }
 
-        queue[count - 1] = null;
         count--;
-
-        return removed;
+        queue[count] = null;
+        return first;
     }
 
     public int size() {
@@ -48,15 +41,12 @@ public class NaiveUploadQueue {
 
     public void printState() {
         System.out.print("[");
-
         for (int i = 0; i < count; i++) {
             System.out.print(queue[i].getStudentId());
-
             if (i < count - 1) {
                 System.out.print(", ");
             }
         }
-
         System.out.println("]");
     }
 }

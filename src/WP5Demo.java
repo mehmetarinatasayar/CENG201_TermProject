@@ -1,234 +1,104 @@
 public class WP5Demo {
-
-    private static final long BASE_TIME =
-            80_000_000L;
+    private static final long BASE_TIME = 80_000_000L;
 
     public static void main(String[] args) {
-        runRotationDemo();
+        rotationDemo();
         System.out.println();
-        runRangeQueryDemo();
+        rangeDemo();
         System.out.println();
-        runHeightExperiment();
+        heightDemo();
     }
 
-    private static void runRotationDemo() {
-        System.out.println(
-                "=== ALL FOUR AVL ROTATIONS ==="
-        );
+    private static void rotationDemo() {
+        SubmissionTimeline ll = makeTree(30, 20, 10, "LL");
+        SubmissionTimeline rr = makeTree(10, 20, 30, "RR");
+        SubmissionTimeline lr = makeTree(30, 10, 20, "LR");
+        SubmissionTimeline rl = makeTree(10, 30, 20, "RL");
 
-        SubmissionTimeline llTree =
-                new SubmissionTimeline();
-        llTree.insert(create("LL-1", 30));
-        llTree.insert(create("LL-2", 20));
-        llTree.insert(create("LL-3", 10));
-        System.out.println(
-                "LL rotations: "
-                        + llTree.getLlRotationCount()
-        );
-
-        SubmissionTimeline rrTree =
-                new SubmissionTimeline();
-        rrTree.insert(create("RR-1", 10));
-        rrTree.insert(create("RR-2", 20));
-        rrTree.insert(create("RR-3", 30));
-        System.out.println(
-                "RR rotations: "
-                        + rrTree.getRrRotationCount()
-        );
-
-        SubmissionTimeline lrTree =
-                new SubmissionTimeline();
-        lrTree.insert(create("LR-1", 30));
-        lrTree.insert(create("LR-2", 10));
-        lrTree.insert(create("LR-3", 20));
-        System.out.println(
-                "LR rotations: "
-                        + lrTree.getLrRotationCount()
-        );
-
-        SubmissionTimeline rlTree =
-                new SubmissionTimeline();
-        rlTree.insert(create("RL-1", 10));
-        rlTree.insert(create("RL-2", 30));
-        rlTree.insert(create("RL-3", 20));
-        System.out.println(
-                "RL rotations: "
-                        + rlTree.getRlRotationCount()
-        );
+        System.out.println("=== ALL FOUR AVL ROTATIONS ===");
+        System.out.println("LL rotations: " + ll.getLlRotationCount());
+        System.out.println("RR rotations: " + rr.getRrRotationCount());
+        System.out.println("LR rotations: " + lr.getLrRotationCount());
+        System.out.println("RL rotations: " + rl.getRlRotationCount());
     }
 
-    private static void runRangeQueryDemo() {
-        System.out.println(
-                "=== RECURSIVE RANGE QUERY DEMO ==="
-        );
+    private static SubmissionTimeline makeTree(int a, int b, int c, String name) {
+        SubmissionTimeline tree = new SubmissionTimeline();
+        tree.insert(create(name + "-1", a));
+        tree.insert(create(name + "-2", b));
+        tree.insert(create(name + "-3", c));
+        return tree;
+    }
 
-        SubmissionTimeline timeline =
-                new SubmissionTimeline();
-
-        int[] times = {
-                50, 30, 70, 20, 40,
-                60, 80, 10, 90, 55
-        };
+    private static void rangeDemo() {
+        SubmissionTimeline timeline = new SubmissionTimeline();
+        int[] times = {50, 30, 70, 20, 40, 60, 80, 10, 90, 55};
 
         for (int i = 0; i < times.length; i++) {
-            timeline.insert(
-                    create(
-                            String.format(
-                                    "S-%04d", i + 1
-                            ),
-                            times[i]
-                    )
-            );
+            timeline.insert(create(String.format("S-%04d", i + 1), times[i]));
         }
 
-        System.out.println(
-                "Timeline height: "
-                        + timeline.height()
-        );
+        System.out.println("=== RECURSIVE RANGE QUERY DEMO ===");
+        System.out.println("Timeline height: " + timeline.height());
 
-        Submission[] middle =
-                timeline.submittedBetween(
-                        timestampFor(35),
-                        timestampFor(65)
-                );
-
-        printQuery(
-                "Middle window [35, 65]",
-                middle,
-                timeline.getLastVisitedCount()
-        );
-
-        Submission[] empty =
-                timeline.submittedBetween(
-                        timestampFor(100),
-                        timestampFor(110)
-                );
-
-        printQuery(
-                "Empty window [100, 110]",
-                empty,
-                timeline.getLastVisitedCount()
-        );
-
-        Submission[] full =
-                timeline.submittedBetween(
-                        timestampFor(0),
-                        timestampFor(100)
-                );
-
-        printQuery(
-                "Full window [0, 100]",
-                full,
-                timeline.getLastVisitedCount()
-        );
+        runQuery(timeline, "Middle window [35, 65]", 35, 65);
+        runQuery(timeline, "Empty window [100, 110]", 100, 110);
+        runQuery(timeline, "Full window [0, 100]", 0, 100);
     }
 
-    private static void printQuery(
-            String label,
-            Submission[] result,
-            int visitedCount
-    ) {
-        System.out.println();
-        System.out.println(label);
-        System.out.println(
-                "Matches: " + result.length
-        );
-        System.out.println(
-                "Visited nodes: " + visitedCount
-        );
+    private static void runQuery(SubmissionTimeline timeline, String title,
+                                 int start, int end) {
+        Submission[] result = timeline.submittedBetween(
+                timestamp(start), timestamp(end));
+
+        System.out.println("\n" + title);
+        System.out.println("Matches: " + result.length);
+        System.out.println("Visited nodes: " + timeline.getLastVisitedCount());
 
         for (int i = 0; i < result.length; i++) {
-            System.out.println(
-                    result[i].getStudentId()
-                            + " "
-                            + result[i].clock()
-            );
+            System.out.println(result[i].getStudentId() + " " + result[i].clock());
         }
     }
 
-    private static void runHeightExperiment() {
-        System.out.println(
-                "=== 10,000 INCREASING INSERTS ==="
-        );
+    private static void heightDemo() {
+        int count = 10_000;
+        Submission[] data = new Submission[count];
 
-        final int recordCount = 10_000;
-
-        Submission[] increasing =
-                new Submission[recordCount];
-
-        for (int i = 0; i < recordCount; i++) {
-            increasing[i] =
-                    new Submission(
-                            String.format(
-                                    "H-%05d", i + 1
-                            ),
-                            "height-test.pdf",
-                            1000,
-                            BASE_TIME + i,
-                            1,
-                            false
-                    );
+        for (int i = 0; i < count; i++) {
+            data[i] = new Submission(String.format("H-%05d", i + 1),
+                    "height-test.pdf", 1000, BASE_TIME + i, 1, false);
         }
 
-        PlainSubmissionBST plainTree =
-                new PlainSubmissionBST();
-        SubmissionTimeline avlTree =
-                new SubmissionTimeline();
+        PlainSubmissionBST plain = new PlainSubmissionBST();
+        SubmissionTimeline avl = new SubmissionTimeline();
 
-        long plainStart = System.nanoTime();
-
-        for (int i = 0; i < recordCount; i++) {
-            plainTree.insert(increasing[i]);
+        long start = System.nanoTime();
+        for (int i = 0; i < count; i++) {
+            plain.insert(data[i]);
         }
+        long plainTime = System.nanoTime() - start;
 
-        long plainEnd = System.nanoTime();
-        long avlStart = System.nanoTime();
-
-        for (int i = 0; i < recordCount; i++) {
-            avlTree.insert(increasing[i]);
+        start = System.nanoTime();
+        for (int i = 0; i < count; i++) {
+            avl.insert(data[i]);
         }
+        long avlTime = System.nanoTime() - start;
 
-        long avlEnd = System.nanoTime();
-
-        System.out.println(
-                "Plain BST height: "
-                        + plainTree.height()
-        );
-        System.out.println(
-                "AVL height:       "
-                        + avlTree.height()
-        );
-        System.out.println(
-                "Plain insert time: "
-                        + (plainEnd - plainStart)
-                        + " ns"
-        );
-        System.out.println(
-                "AVL insert time:   "
-                        + (avlEnd - avlStart)
-                        + " ns"
-        );
-        System.out.println(
-                "AVL RR rotations during increasing inserts: "
-                        + avlTree.getRrRotationCount()
-        );
+        System.out.println("=== 10,000 INCREASING INSERTS ===");
+        System.out.println("Plain BST height: " + plain.height());
+        System.out.println("AVL height:       " + avl.height());
+        System.out.println("Plain insert time: " + plainTime + " ns");
+        System.out.println("AVL insert time:   " + avlTime + " ns");
+        System.out.println("AVL RR rotations during increasing inserts: "
+                + avl.getRrRotationCount());
     }
 
-    private static Submission create(
-            String studentId,
-            int timeValue
-    ) {
-        return new Submission(
-                studentId,
-                studentId + ".pdf",
-                1000,
-                timestampFor(timeValue),
-                1,
-                false
-        );
+    private static Submission create(String id, int time) {
+        return new Submission(id, id + ".pdf", 1000,
+                timestamp(time), 1, false);
     }
 
-    private static long timestampFor(int value) {
+    private static long timestamp(int value) {
         return BASE_TIME + value * 1_000L;
     }
 }

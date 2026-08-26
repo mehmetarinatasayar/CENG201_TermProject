@@ -1,5 +1,4 @@
 public class PlainSubmissionBST {
-
     private static class Node {
         Submission value;
         Node left;
@@ -7,18 +6,11 @@ public class PlainSubmissionBST {
 
         Node(Submission value) {
             this.value = value;
-            this.left = null;
-            this.right = null;
         }
     }
 
     private Node root;
     private int treeHeight;
-
-    public PlainSubmissionBST() {
-        root = null;
-        treeHeight = 0;
-    }
 
     public void insert(Submission submission) {
         Node newNode = new Node(submission);
@@ -31,37 +23,26 @@ public class PlainSubmissionBST {
 
         Node current = root;
         int depth = 1;
+        long newTime = submission.getTimestampMs();
 
         while (true) {
             depth++;
+            long currentTime = current.value.getTimestampMs();
 
-            if (
-                    submission.getTimestampMs()
-                            < current.value.getTimestampMs()
-            ) {
+            if (newTime < currentTime) {
                 if (current.left == null) {
                     current.left = newNode;
                     break;
                 }
-
                 current = current.left;
-
-            } else if (
-                    submission.getTimestampMs()
-                            > current.value.getTimestampMs()
-            ) {
+            } else if (newTime > currentTime) {
                 if (current.right == null) {
                     current.right = newNode;
                     break;
                 }
-
                 current = current.right;
-
             } else {
-                throw new IllegalArgumentException(
-                        "Duplicate timestamp: "
-                                + submission.getTimestampMs()
-                );
+                throw new IllegalArgumentException("Duplicate timestamp: " + newTime);
             }
         }
 

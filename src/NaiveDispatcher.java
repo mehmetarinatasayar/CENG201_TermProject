@@ -1,14 +1,6 @@
 public class NaiveDispatcher {
-
-    private Submission[] submissions;
+    private Submission[] submissions = new Submission[8];
     private int count;
-
-    private static final int INITIAL_CAPACITY = 8;
-
-    public NaiveDispatcher() {
-        submissions = new Submission[INITIAL_CAPACITY];
-        count = 0;
-    }
 
     public void submit(Submission submission) {
         if (count == submissions.length) {
@@ -16,14 +8,7 @@ public class NaiveDispatcher {
         }
 
         int i = count - 1;
-
-        while (
-                i >= 0
-                        && hasHigherPriority(
-                                submissions[i],
-                                submission
-                        )
-        ) {
+        while (i >= 0 && hasHigherPriority(submissions[i], submission)) {
             submissions[i + 1] = submissions[i];
             i--;
         }
@@ -37,12 +22,9 @@ public class NaiveDispatcher {
             return null;
         }
 
-        int lastIndex = count - 1;
-        Submission result = submissions[lastIndex];
-
-        submissions[lastIndex] = null;
         count--;
-
+        Submission result = submissions[count];
+        submissions[count] = null;
         return result;
     }
 
@@ -50,38 +32,21 @@ public class NaiveDispatcher {
         return count;
     }
 
-    private boolean hasHigherPriority(
-            Submission first,
-            Submission second
-    ) {
-        if (
-                first.hasAccommodation()
-                        != second.hasAccommodation()
-        ) {
+    private boolean hasHigherPriority(Submission first, Submission second) {
+        if (first.hasAccommodation() != second.hasAccommodation()) {
             return first.hasAccommodation();
         }
-
-        if (
-                first.getTimestampMs()
-                        != second.getTimestampMs()
-        ) {
-            return first.getTimestampMs()
-                    < second.getTimestampMs();
+        if (first.getTimestampMs() != second.getTimestampMs()) {
+            return first.getTimestampMs() < second.getTimestampMs();
         }
-
-        return first.getStudentId().compareTo(
-                second.getStudentId()
-        ) < 0;
+        return first.getStudentId().compareTo(second.getStudentId()) < 0;
     }
 
     private void resize() {
-        Submission[] larger =
-                new Submission[submissions.length * 2];
-
+        Submission[] larger = new Submission[submissions.length * 2];
         for (int i = 0; i < count; i++) {
             larger[i] = submissions[i];
         }
-
         submissions = larger;
     }
 }

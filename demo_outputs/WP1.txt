@@ -19,4 +19,4 @@ Active record: S-0001 v3 project_really_final.pdf  1300 KB 23:53:20.000
 Unknown lookup: null
 
 === 100,000 LOOKUP TIMING ===
-100,000 lookups: 3067900 ns
+100,000 lookups: 2125800 ns

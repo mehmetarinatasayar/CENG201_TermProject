@@ -1,219 +1,114 @@
 public class RollbackService {
-
-    private static class HistoryEntry {
+    private static class History {
         String studentId;
-        VersionStack stack;
-        HistoryEntry next;
+        VersionStack stack = new VersionStack();
+        History next;
 
-        HistoryEntry(String studentId) {
+        History(String studentId) {
             this.studentId = studentId;
-            this.stack = new VersionStack();
-            this.next = null;
         }
     }
 
     private final SubmissionRegistry registry;
-    private HistoryEntry[] histories;
-    private int historyCount;
-
-    private static final int INITIAL_CAPACITY = 8;
-    private static final double LOAD_FACTOR_LIMIT = 0.75;
+    private History[] table = new History[8];
+    private int count;
 
     public RollbackService(SubmissionRegistry registry) {
         this.registry = registry;
-        this.histories =
-                new HistoryEntry[INITIAL_CAPACITY];
-        this.historyCount = 0;
     }
 
-    public int reupload(
-            String studentId,
-            String fileName,
-            int sizeKb,
-            long timestampMs
-    ) {
-        Submission active =
-                registry.lookup(studentId);
-
+    public int reupload(String studentId, String fileName,
+                        int sizeKb, long timestampMs) {
+        Submission active = registry.lookup(studentId);
         if (active == null) {
-            throw new IllegalArgumentException(
-                    "Student not found: " + studentId
-            );
+            throw new IllegalArgumentException("Student not found: " + studentId);
         }
 
-        VersionRecord oldVersion =
-                new VersionRecord(
-                        active.getFileName(),
-                        active.getSizeKb(),
-                        active.getTimestampMs(),
-                        active.getVersion()
-                );
+        VersionRecord oldVersion = new VersionRecord(
+                active.getFileName(), active.getSizeKb(),
+                active.getTimestampMs(), active.getVersion());
 
-        HistoryEntry history =
-                getOrCreateHistory(studentId);
-
-        history.stack.push(oldVersion);
-
-        return registry.updateVersion(
-                studentId,
-                fileName,
-                sizeKb,
-                timestampMs
-        );
+        getOrCreateHistory(studentId).stack.push(oldVersion);
+        return registry.updateVersion(studentId, fileName, sizeKb, timestampMs);
     }
 
     public void rollback(String studentId) {
-        Submission active =
-                registry.lookup(studentId);
-
+        Submission active = registry.lookup(studentId);
         if (active == null) {
-            System.out.println(
-                    "Student not found: " + studentId
-            );
+            System.out.println("Student not found: " + studentId);
             return;
         }
 
-        HistoryEntry history =
-                findHistory(studentId);
-
-        if (
-                history == null
-                        || history.stack.isEmpty()
-        ) {
-            System.out.println(
-                    "No earlier version for " + studentId
-            );
+        History history = findHistory(studentId);
+        if (history == null || history.stack.isEmpty()) {
+            System.out.println("No earlier version for " + studentId);
             return;
         }
 
-        VersionRecord previous =
-                history.stack.pop();
+        VersionRecord old = history.stack.pop();
+        active.restoreFile(old.getFileName(), old.getSizeKb(),
+                old.getTimestampMs(), old.getVersion());
 
-        active.restoreFile(
-                previous.getFileName(),
-                previous.getSizeKb(),
-                previous.getTimestampMs(),
-                previous.getVersion()
-        );
-
-        System.out.println(
-                "Rollback completed for "
-                        + studentId
-                        + ": restored v"
-                        + previous.getVersion()
-        );
+        System.out.println("Rollback completed for " + studentId
+                + ": restored v" + old.getVersion());
     }
 
     public void printHistory(String studentId) {
-        HistoryEntry history =
-                findHistory(studentId);
-
         System.out.print(studentId + " ");
+        History history = findHistory(studentId);
 
         if (history == null) {
-            System.out.println(
-                    "Stack top -> [empty]"
-            );
-            return;
+            System.out.println("Stack top -> [empty]");
+        } else {
+            history.stack.printState();
         }
-
-        history.stack.printState();
     }
 
-    private HistoryEntry findHistory(
-            String studentId
-    ) {
-        int index = indexFor(
-                studentId,
-                histories.length
-        );
+    private int indexFor(String studentId) {
+        return Math.floorMod(studentId.hashCode(), table.length);
+    }
 
-        HistoryEntry current = histories[index];
-
+    private History findHistory(String studentId) {
+        History current = table[indexFor(studentId)];
         while (current != null) {
             if (current.studentId.equals(studentId)) {
                 return current;
             }
-
             current = current.next;
         }
-
         return null;
     }
 
-    private HistoryEntry getOrCreateHistory(
-            String studentId
-    ) {
-        HistoryEntry existing =
-                findHistory(studentId);
-
-        if (existing != null) {
-            return existing;
+    private History getOrCreateHistory(String studentId) {
+        History history = findHistory(studentId);
+        if (history != null) {
+            return history;
         }
 
-        int index = indexFor(
-                studentId,
-                histories.length
-        );
+        int index = indexFor(studentId);
+        history = new History(studentId);
+        history.next = table[index];
+        table[index] = history;
+        count++;
 
-        HistoryEntry newEntry =
-                new HistoryEntry(studentId);
-
-        newEntry.next = histories[index];
-        histories[index] = newEntry;
-        historyCount++;
-
-        double loadFactor =
-                (double) historyCount
-                        / histories.length;
-
-        if (loadFactor > LOAD_FACTOR_LIMIT) {
+        if ((double) count / table.length > 0.75) {
             resize();
         }
-
-        return newEntry;
-    }
-
-    private int indexFor(
-            String studentId,
-            int capacity
-    ) {
-        return Math.floorMod(
-                studentId.hashCode(),
-                capacity
-        );
+        return history;
     }
 
     private void resize() {
-        HistoryEntry[] oldHistories = histories;
+        History[] oldTable = table;
+        table = new History[oldTable.length * 2];
 
-        histories =
-                new HistoryEntry[
-                        oldHistories.length * 2
-                ];
-
-        for (
-                int i = 0;
-                i < oldHistories.length;
-                i++
-        ) {
-            HistoryEntry current =
-                    oldHistories[i];
-
+        for (int i = 0; i < oldTable.length; i++) {
+            History current = oldTable[i];
             while (current != null) {
-                HistoryEntry nextEntry =
-                        current.next;
-
-                int newIndex = indexFor(
-                        current.studentId,
-                        histories.length
-                );
-
-                current.next =
-                        histories[newIndex];
-
-                histories[newIndex] = current;
-                current = nextEntry;
+                History next = current.next;
+                int newIndex = indexFor(current.studentId);
+                current.next = table[newIndex];
+                table[newIndex] = current;
+                current = next;
             }
         }
     }

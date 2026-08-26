@@ -1,19 +1,14 @@
 public class WP3Demo {
-
     public static void main(String[] args) {
-        runPriorityDemo();
-
+        priorityDemo();
         System.out.println();
-        runTimingTest(1_000);
-
+        timingTest(1_000);
         System.out.println();
-        runTimingTest(10_000);
+        timingTest(10_000);
     }
 
-    private static void runPriorityDemo() {
-        System.out.println("=== WP3 PRIORITY DEMO ===");
-
-        Submission[] submissions = {
+    private static void priorityDemo() {
+        Submission[] data = {
                 create("S-0001", 83_000_000L, false),
                 create("S-0002", 81_000_000L, true),
                 create("S-0003", 80_000_000L, false),
@@ -26,209 +21,115 @@ public class WP3Demo {
 
         NaiveDispatcher naive = new NaiveDispatcher();
         HeapDispatcher heap = new HeapDispatcher();
-
-        for (int i = 0; i < submissions.length; i++) {
-            naive.submit(submissions[i]);
-            heap.submit(submissions[i]);
+        for (int i = 0; i < data.length; i++) {
+            naive.submit(data[i]);
+            heap.submit(data[i]);
         }
 
-        Submission[] naiveOrder =
-                new Submission[submissions.length];
-        Submission[] heapOrder =
-                new Submission[submissions.length];
+        Submission[] expected = new Submission[data.length];
+        boolean same = true;
 
-        System.out.println();
-        System.out.println("Naive order:");
-
-        for (int i = 0; i < submissions.length; i++) {
-            naiveOrder[i] = naive.next();
-            System.out.println(naiveOrder[i]);
+        System.out.println("=== WP3 PRIORITY DEMO ===");
+        System.out.println("\nNaive order:");
+        for (int i = 0; i < data.length; i++) {
+            expected[i] = naive.next();
+            System.out.println(expected[i]);
         }
 
-        System.out.println();
-        System.out.println("Heap order:");
-
-        for (int i = 0; i < submissions.length; i++) {
-            heapOrder[i] = heap.next();
-            System.out.println(heapOrder[i]);
-        }
-
-        boolean sameOrder = true;
-
-        for (int i = 0; i < submissions.length; i++) {
-            if (naiveOrder[i] != heapOrder[i]) {
-                sameOrder = false;
-                break;
+        System.out.println("\nHeap order:");
+        for (int i = 0; i < data.length; i++) {
+            Submission actual = heap.next();
+            System.out.println(actual);
+            if (actual != expected[i]) {
+                same = false;
             }
         }
 
-        System.out.println();
-        System.out.println(
-                "Both dispatchers match: " + sameOrder
-        );
-
-        runBuildHeapDemo(submissions, naiveOrder);
-    }
-
-    private static void runBuildHeapDemo(
-            Submission[] submissions,
-            Submission[] expectedOrder
-    ) {
         HeapDispatcher burstHeap = new HeapDispatcher();
-        burstHeap.loadBurst(submissions);
-
-        boolean sameOrder = true;
-
-        for (int i = 0; i < expectedOrder.length; i++) {
-            Submission actual = burstHeap.next();
-
-            if (actual != expectedOrder[i]) {
-                sameOrder = false;
+        burstHeap.loadBurst(data);
+        boolean burstSame = true;
+        for (int i = 0; i < data.length; i++) {
+            if (burstHeap.next() != expected[i]) {
+                burstSame = false;
             }
         }
 
-        System.out.println(
-                "Bottom-up loadBurst matches: " + sameOrder
-        );
+        System.out.println("\nBoth dispatchers match: " + same);
+        System.out.println("Bottom-up loadBurst matches: " + burstSame);
     }
 
-    private static Submission create(
-            String studentId,
-            long timestamp,
-            boolean accommodation
-    ) {
-        return new Submission(
-                studentId,
-                studentId + "_project.pdf",
-                1000,
-                timestamp,
-                1,
-                accommodation
-        );
+    private static Submission create(String id, long time, boolean flagged) {
+        return new Submission(id, id + "_project.pdf", 1000,
+                time, 1, flagged);
     }
 
-    private static void runTimingTest(int recordCount) {
-        System.out.println(
-                "=== " + recordCount + " RECORD TIMING ==="
-        );
-
-        Submission[] burst = generateBurst(recordCount);
-        warmUp(burst);
-
-        long naiveTime = timeNaive(burst);
-        long heapTime = timeHeap(burst);
-        long buildHeapTime = timeBuildHeap(burst);
-
-        System.out.println(
-                "Naive dispatcher: " + naiveTime + " ns"
-        );
-        System.out.println(
-                "Heap dispatcher:  " + heapTime + " ns"
-        );
-        System.out.println(
-                "Bottom-up heap:    " + buildHeapTime + " ns"
-        );
-
-        if (heapTime > 0) {
-            double speedup =
-                    (double) naiveTime / heapTime;
-
-            System.out.printf(
-                    "Heap speedup: %.2f times%n",
-                    speedup
-            );
-        }
-    }
-
-    private static Submission[] generateBurst(
-            int recordCount
-    ) {
-        Submission[] burst =
-                new Submission[recordCount];
-
-        ScenarioGenerator generator =
-                new ScenarioGenerator(20260725L);
-
-        for (int i = 0; i < recordCount; i++) {
-            int studentIndex =
-                    i % ScenarioGenerator.STUDENT_COUNT;
-            burst[i] =
-                    generator.nextUpload(studentIndex);
+    private static void timingTest(int count) {
+        Submission[] data = createBurst(count);
+        Submission[] warmUp = new Submission[Math.min(500, count)];
+        for (int i = 0; i < warmUp.length; i++) {
+            warmUp[i] = data[i];
         }
 
-        return burst;
+        timeNaive(warmUp);
+        timeHeap(warmUp);
+        timeBuildHeap(warmUp);
+
+        long naiveTime = timeNaive(data);
+        long heapTime = timeHeap(data);
+        long buildTime = timeBuildHeap(data);
+
+        System.out.println("=== " + count + " RECORD TIMING ===");
+        System.out.println("Naive dispatcher: " + naiveTime + " ns");
+        System.out.println("Heap dispatcher:  " + heapTime + " ns");
+        System.out.println("Bottom-up heap:    " + buildTime + " ns");
+        System.out.printf("Heap speedup: %.2f times%n",
+                (double) naiveTime / heapTime);
     }
 
-    private static long timeNaive(
-            Submission[] burst
-    ) {
-        NaiveDispatcher dispatcher =
-                new NaiveDispatcher();
+    private static Submission[] createBurst(int count) {
+        Submission[] data = new Submission[count];
+        ScenarioGenerator generator = new ScenarioGenerator(20260725L);
 
+        for (int i = 0; i < count; i++) {
+            data[i] = generator.nextUpload(i % ScenarioGenerator.STUDENT_COUNT);
+        }
+        return data;
+    }
+
+    private static long timeNaive(Submission[] data) {
+        NaiveDispatcher dispatcher = new NaiveDispatcher();
         long start = System.nanoTime();
 
-        for (int i = 0; i < burst.length; i++) {
-            dispatcher.submit(burst[i]);
+        for (int i = 0; i < data.length; i++) {
+            dispatcher.submit(data[i]);
         }
-
-        while (dispatcher.size() > 0) {
-            dispatcher.next();
+        while (dispatcher.next() != null) {
+            // Dispatch all records.
         }
-
         return System.nanoTime() - start;
     }
 
-    private static long timeHeap(
-            Submission[] burst
-    ) {
-        HeapDispatcher dispatcher =
-                new HeapDispatcher();
-
+    private static long timeHeap(Submission[] data) {
+        HeapDispatcher dispatcher = new HeapDispatcher();
         long start = System.nanoTime();
 
-        for (int i = 0; i < burst.length; i++) {
-            dispatcher.submit(burst[i]);
+        for (int i = 0; i < data.length; i++) {
+            dispatcher.submit(data[i]);
         }
-
-        while (dispatcher.size() > 0) {
-            dispatcher.next();
+        while (dispatcher.next() != null) {
+            // Dispatch all records.
         }
-
         return System.nanoTime() - start;
     }
 
-    private static long timeBuildHeap(
-            Submission[] burst
-    ) {
-        HeapDispatcher dispatcher =
-                new HeapDispatcher();
-
+    private static long timeBuildHeap(Submission[] data) {
+        HeapDispatcher dispatcher = new HeapDispatcher();
         long start = System.nanoTime();
 
-        dispatcher.loadBurst(burst);
-
-        while (dispatcher.size() > 0) {
-            dispatcher.next();
+        dispatcher.loadBurst(data);
+        while (dispatcher.next() != null) {
+            // Dispatch all records.
         }
-
         return System.nanoTime() - start;
-    }
-
-    private static void warmUp(
-            Submission[] burst
-    ) {
-        int warmUpSize =
-                Math.min(500, burst.length);
-
-        Submission[] warmUpBurst =
-                new Submission[warmUpSize];
-
-        for (int i = 0; i < warmUpSize; i++) {
-            warmUpBurst[i] = burst[i];
-        }
-
-        timeNaive(warmUpBurst);
-        timeHeap(warmUpBurst);
-        timeBuildHeap(warmUpBurst);
     }
 }

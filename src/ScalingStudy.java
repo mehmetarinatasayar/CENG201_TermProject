@@ -9,11 +9,12 @@ public class ScalingStudy {
         System.out.println("Times are in milliseconds.");
         System.out.println();
         System.out.printf("%-9s %12s %12s %12s %12s %14s%n",
-                "Records", "Naive queue", "Circular", "Naive heap",
+                "Records", "Naive queue", "Circular", "Naive dispatch",
                 "Binary heap", "End-to-end");
         System.out.println("--------------------------------------------------------------------------");
 
-        for (int size : SIZES) {
+        for (int i = 0; i < SIZES.length; i++) {
+            int size = SIZES[i];
             Submission[] records = createRecords(size);
 
             double naiveQueue = measureNaiveQueue(records);
@@ -58,8 +59,8 @@ public class ScalingStudy {
         NaiveUploadQueue queue = new NaiveUploadQueue(records.length);
         long start = System.nanoTime();
 
-        for (Submission record : records) {
-            queue.enqueue(record);
+        for (int i = 0; i < records.length; i++) {
+            queue.enqueue(records[i]);
         }
         while (queue.dequeue() != null) {
             // Dequeue every record so shifting cost is measured.
@@ -72,8 +73,8 @@ public class ScalingStudy {
         CircularUploadQueue queue = new CircularUploadQueue(records.length);
         long start = System.nanoTime();
 
-        for (Submission record : records) {
-            queue.enqueue(record);
+        for (int i = 0; i < records.length; i++) {
+            queue.enqueue(records[i]);
         }
         while (queue.dequeue() != null) {
             // Dequeue every record.
@@ -86,8 +87,8 @@ public class ScalingStudy {
         NaiveDispatcher dispatcher = new NaiveDispatcher();
         long start = System.nanoTime();
 
-        for (Submission record : records) {
-            dispatcher.submit(record);
+        for (int i = 0; i < records.length; i++) {
+            dispatcher.submit(records[i]);
         }
         while (dispatcher.next() != null) {
             // Dispatch every record.
@@ -116,8 +117,8 @@ public class ScalingStudy {
 
         long start = System.nanoTime();
 
-        for (Submission record : records) {
-            intake.enqueue(record);
+        for (int i = 0; i < records.length; i++) {
+            intake.enqueue(records[i]);
         }
 
         Submission current;

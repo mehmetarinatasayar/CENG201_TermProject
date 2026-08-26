@@ -1,32 +1,28 @@
 public class SubmissionTimeline {
-
     private static class Node {
         Submission value;
         Node left;
         Node right;
-        int height;
+        int height = 1;
 
         Node(Submission value) {
             this.value = value;
-            this.height = 1;
         }
     }
 
     private Node root;
     private int lastVisitedCount;
+    private int resultIndex;
     private int llRotationCount;
     private int rrRotationCount;
     private int lrRotationCount;
     private int rlRotationCount;
 
     public void insert(Submission submission) {
-        root = insertRecursive(root, submission);
+        root = insert(root, submission);
     }
 
-    private Node insertRecursive(
-            Node node,
-            Submission submission
-    ) {
+    private Node insert(Node node, Submission submission) {
         if (node == null) {
             return new Node(submission);
         }
@@ -35,55 +31,30 @@ public class SubmissionTimeline {
         long nodeKey = node.value.getTimestampMs();
 
         if (key < nodeKey) {
-            node.left = insertRecursive(
-                    node.left, submission
-            );
+            node.left = insert(node.left, submission);
         } else if (key > nodeKey) {
-            node.right = insertRecursive(
-                    node.right, submission
-            );
+            node.right = insert(node.right, submission);
         } else {
-            throw new IllegalArgumentException(
-                    "Duplicate timestamp: " + key
-            );
+            throw new IllegalArgumentException("Duplicate timestamp: " + key);
         }
 
         updateHeight(node);
-        int balance = balanceOf(node);
+        int balance = getBalance(node);
 
-        if (
-                balance > 1
-                        && key
-                        < node.left.value.getTimestampMs()
-        ) {
+        if (balance > 1 && key < node.left.value.getTimestampMs()) {
             llRotationCount++;
             return rotateRight(node);
         }
-
-        if (
-                balance < -1
-                        && key
-                        > node.right.value.getTimestampMs()
-        ) {
+        if (balance < -1 && key > node.right.value.getTimestampMs()) {
             rrRotationCount++;
             return rotateLeft(node);
         }
-
-        if (
-                balance > 1
-                        && key
-                        > node.left.value.getTimestampMs()
-        ) {
+        if (balance > 1 && key > node.left.value.getTimestampMs()) {
             lrRotationCount++;
             node.left = rotateLeft(node.left);
             return rotateRight(node);
         }
-
-        if (
-                balance < -1
-                        && key
-                        < node.right.value.getTimestampMs()
-        ) {
+        if (balance < -1 && key < node.right.value.getTimestampMs()) {
             rlRotationCount++;
             node.right = rotateRight(node.right);
             return rotateLeft(node);
@@ -93,176 +64,105 @@ public class SubmissionTimeline {
     }
 
     public int height() {
-        return heightOf(root);
+        return getHeight(root);
     }
 
-    public Submission[] submittedBetween(
-            long t1,
-            long t2
-    ) {
-        if (t1 > t2) {
+    public Submission[] submittedBetween(long start, long end) {
+        if (start > end) {
             lastVisitedCount = 0;
             return new Submission[0];
         }
 
-        int resultCount =
-                countBetween(root, t1, t2);
-
-        Submission[] result =
-                new Submission[resultCount];
-
-        int[] resultIndex = {0};
+        int count = countBetween(root, start, end);
+        Submission[] result = new Submission[count];
         lastVisitedCount = 0;
-
-        fillBetween(
-                root, t1, t2, result, resultIndex
-        );
-
+        resultIndex = 0;
+        fillBetween(root, start, end, result);
         return result;
     }
 
-    public int getLastVisitedCount() {
-        return lastVisitedCount;
-    }
-
-    public int getLlRotationCount() {
-        return llRotationCount;
-    }
-
-    public int getRrRotationCount() {
-        return rrRotationCount;
-    }
-
-    public int getLrRotationCount() {
-        return lrRotationCount;
-    }
-
-    public int getRlRotationCount() {
-        return rlRotationCount;
-    }
-
-    private int countBetween(
-            Node node,
-            long t1,
-            long t2
-    ) {
+    private int countBetween(Node node, long start, long end) {
         if (node == null) {
             return 0;
         }
 
-        long timestamp =
-                node.value.getTimestampMs();
-
+        long time = node.value.getTimestampMs();
         int count = 0;
 
-        if (t1 < timestamp) {
-            count += countBetween(
-                    node.left, t1, t2
-            );
+        if (start < time) {
+            count += countBetween(node.left, start, end);
         }
-
-        if (
-                timestamp >= t1
-                        && timestamp <= t2
-        ) {
+        if (time >= start && time <= end) {
             count++;
         }
-
-        if (timestamp < t2) {
-            count += countBetween(
-                    node.right, t1, t2
-            );
+        if (time < end) {
+            count += countBetween(node.right, start, end);
         }
-
         return count;
     }
 
-    private void fillBetween(
-            Node node,
-            long t1,
-            long t2,
-            Submission[] result,
-            int[] resultIndex
-    ) {
+    private void fillBetween(Node node, long start, long end, Submission[] result) {
         if (node == null) {
             return;
         }
 
         lastVisitedCount++;
+        long time = node.value.getTimestampMs();
 
-        long timestamp =
-                node.value.getTimestampMs();
-
-        if (t1 < timestamp) {
-            fillBetween(
-                    node.left,
-                    t1,
-                    t2,
-                    result,
-                    resultIndex
-            );
+        if (start < time) {
+            fillBetween(node.left, start, end, result);
         }
-
-        if (
-                timestamp >= t1
-                        && timestamp <= t2
-        ) {
-            result[resultIndex[0]] = node.value;
-            resultIndex[0]++;
+        if (time >= start && time <= end) {
+            result[resultIndex] = node.value;
+            resultIndex++;
         }
-
-        if (timestamp < t2) {
-            fillBetween(
-                    node.right,
-                    t1,
-                    t2,
-                    result,
-                    resultIndex
-            );
+        if (time < end) {
+            fillBetween(node.right, start, end, result);
         }
     }
 
     private Node rotateRight(Node oldRoot) {
         Node newRoot = oldRoot.left;
-        Node movedSubtree = newRoot.right;
+        Node moved = newRoot.right;
 
         newRoot.right = oldRoot;
-        oldRoot.left = movedSubtree;
+        oldRoot.left = moved;
 
         updateHeight(oldRoot);
         updateHeight(newRoot);
-
         return newRoot;
     }
 
     private Node rotateLeft(Node oldRoot) {
         Node newRoot = oldRoot.right;
-        Node movedSubtree = newRoot.left;
+        Node moved = newRoot.left;
 
         newRoot.left = oldRoot;
-        oldRoot.right = movedSubtree;
+        oldRoot.right = moved;
 
         updateHeight(oldRoot);
         updateHeight(newRoot);
-
         return newRoot;
     }
 
     private void updateHeight(Node node) {
-        node.height = 1 + Math.max(
-                heightOf(node.left),
-                heightOf(node.right)
-        );
+        node.height = 1 + Math.max(getHeight(node.left), getHeight(node.right));
     }
 
-    private int heightOf(Node node) {
-        return node == null ? 0 : node.height;
+    private int getHeight(Node node) {
+        if (node == null) {
+            return 0;
+        }
+        return node.height;
     }
 
-    private int balanceOf(Node node) {
-        return node == null
-                ? 0
-                : heightOf(node.left)
-                - heightOf(node.right);
+    private int getBalance(Node node) {
+        return getHeight(node.left) - getHeight(node.right);
     }
+
+    public int getLastVisitedCount() { return lastVisitedCount; }
+    public int getLlRotationCount() { return llRotationCount; }
+    public int getRrRotationCount() { return rrRotationCount; }
+    public int getLrRotationCount() { return lrRotationCount; }
+    public int getRlRotationCount() { return rlRotationCount; }
 }

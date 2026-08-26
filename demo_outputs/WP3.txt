@@ -24,14 +24,14 @@ Both dispatchers match: true
 Bottom-up loadBurst matches: true
 
 === 1000 RECORD TIMING ===
-Naive dispatcher: 2629500 ns
-Heap dispatcher:  174300 ns
-Bottom-up heap:    203900 ns
-Heap speedup: 15,09 times
+Naive dispatcher: 2500100 ns
+Heap dispatcher:  160600 ns
+Bottom-up heap:    160300 ns
+Heap speedup: 15,57 times
 
 === 10000 RECORD TIMING ===
-Naive dispatcher: 146280100 ns
-Heap dispatcher:  4161800 ns
-Bottom-up heap:    1628600 ns
-Heap speedup: 35,15 times
+Naive dispatcher: 106633500 ns
+Heap dispatcher:  1530800 ns
+Bottom-up heap:    1035800 ns
+Heap speedup: 69,66 times
 
