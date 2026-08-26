@@ -2,7 +2,8 @@
 
 Console-based assignment submission platform for the CENG 201 term project.
 
-**Student:** Mehmet Arin Atasayar - 210444088  
+**Student:** Mehmet Arin Atasayar - 210444088
+
 **GitHub:** https://github.com/mehmetarinatasayar/CENG201_TermProject
 
 ## Requirements
