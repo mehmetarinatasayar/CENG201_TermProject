@@ -2,6 +2,9 @@
 
 Console-based assignment submission platform for the CENG 201 term project.
 
+**Student:** Mehmet Arin Atasayar - 210444088  
+**GitHub:** https://github.com/mehmetarinatasayar/CENG201_TermProject
+
 ## Requirements
 
 - Java JDK 17 or later
@@ -29,4 +32,12 @@ nodes. Java collection classes are not used for the required core structures.
 
 The final 5-page engineering memo is stored at
 `report/Engineering_Memo.pdf`.
+
+## Submission contents
+
+- `src`: Java source code
+- `demo_outputs`: Captured outputs for WP1-WP7 and the scaling study
+- `report/Engineering_Memo.pdf`: Final engineering memo
+
+The submitted ZIP and the `main` branch contain the same tracked files.
 
