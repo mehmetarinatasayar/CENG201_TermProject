@@ -78,13 +78,17 @@ public class ExamGateEngine {
     }
 
     private void drainPipeline() {
-        Submission current;
+        Submission current = intake.dequeue();
 
-        while ((current = intake.dequeue()) != null) {
+        while (current != null) {
             dispatcher.submit(current);
+            current = intake.dequeue();
         }
-        while ((current = dispatcher.next()) != null) {
+
+        current = dispatcher.next();
+        while (current != null) {
             processEvent((UploadEvent) current);
+            current = dispatcher.next();
         }
     }
 

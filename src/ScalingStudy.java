@@ -121,14 +121,17 @@ public class ScalingStudy {
             intake.enqueue(records[i]);
         }
 
-        Submission current;
-        while ((current = intake.dequeue()) != null) {
+        Submission current = intake.dequeue();
+        while (current != null) {
             dispatcher.submit(current);
+            current = intake.dequeue();
         }
 
-        while ((current = dispatcher.next()) != null) {
+        current = dispatcher.next();
+        while (current != null) {
             registry.put(current);
             timeline.insert(current);
+            current = dispatcher.next();
         }
 
         if (registry.size() != records.length) {

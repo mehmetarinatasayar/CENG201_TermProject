@@ -9,9 +9,16 @@ public class WP1Demo {
                 number = 9; // S-0009 collides with another ID in the small table.
             }
 
+            String fileName;
+            if (i == 7) {
+                fileName = "collision.pdf";
+            } else {
+                fileName = "project" + number + ".pdf";
+            }
+
             data[i] = new Submission(
                     String.format("S-%04d", number),
-                    i == 7 ? "collision.pdf" : "project" + number + ".pdf",
+                    fileName,
                     1000 + i * 100,
                     80_000_001L + i,
                     1,

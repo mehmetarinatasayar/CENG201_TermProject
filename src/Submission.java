@@ -54,8 +54,20 @@ public class Submission {
 
     @Override
     public String toString() {
-        String accommodation = accommodationFlag ? " [ACC]" : "";
-        String late = isLate() ? " LATE" : "";
+        String accommodation;
+        if (accommodationFlag) {
+            accommodation = " [ACC]";
+        } else {
+            accommodation = "";
+        }
+
+        String late;
+        if (isLate()) {
+            late = " LATE";
+        } else {
+            late = "";
+        }
+
         return String.format("%s v%d %-22s %5d KB %s%s%s",
                 studentId, version, fileName, sizeKb, clock(), accommodation, late);
     }

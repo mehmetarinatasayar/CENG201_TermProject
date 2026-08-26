@@ -64,7 +64,12 @@ public class ReportService {
 
         for (int i = 0; i < sorted.length; i++) {
             Submission s = sorted[i];
-            String late = s.isLate() ? "YES" : "NO";
+            String late;
+            if (s.isLate()) {
+                late = "YES";
+            } else {
+                late = "NO";
+            }
 
             System.out.printf("%-10s %-24s %-8d %-13s %-5s%n",
                     fit(s.getStudentId(), 10), fit(s.getFileName(), 24),
